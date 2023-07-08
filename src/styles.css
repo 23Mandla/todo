@@ -1,0 +1,243 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #ffece8;
+  margin: 0;
+  padding: 0;
+}
+
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  animation-name: zoom;
+  animation-duration: 1s;
+}
+
+@keyframes zoom {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+#addTodo {
+  width: 30%;
+  margin: 10em auto;
+  background-color: rgb(76, 76, 90);
+  padding: 1em;
+  border-radius: 10px;
+}
+
+form h1 {
+  color: white;
+  text-align: center;
+}
+
+label {
+  margin-bottom: 10px;
+  color: whitesmoke;
+}
+
+input {
+  background-color: transparent;
+  border: 2px solid rgb(121, 105, 105);
+  border-radius: 5px;
+  padding: 2px;
+  color: #f5f5f5;
+}
+
+input,
+label {
+  display: block;
+}
+
+#todoBtns {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  margin-top: 2em;
+}
+
+.formBtn {
+  width: 6em;
+  background-color: rgb(110, 119, 116);
+  padding: 2px;
+  border-radius: 10px;
+  text-align: center;
+  color: #f5f5f5;
+}
+
+.catContent {
+  cursor: pointer;
+  transition: all ease-in-out 0.5s;
+}
+
+.catContent:hover {
+  transform: translateY(-0.25rem);
+  background-color: slategray;
+}
+
+.todoContainer {
+  padding: 0.8em;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 3em;
+  margin-bottom: 30px;
+  padding-bottom: 1px;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8em;
+  cursor: pointer;
+  background-color: #f5f5f5;
+}
+
+.active {
+  background-image: url("../images/icon.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.listItem {
+  border-bottom: 2px solid grey;
+  color: whitesmoke;
+}
+
+.listItem > p {
+  letter-spacing: 2px;
+  font-size: 19px;
+}
+
+#editContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+#editContainer > i:nth-child(1) {
+  font-size: 1.2em;
+  color: green;
+  cursor: pointer;
+}
+
+#editContainer > i:nth-child(2) {
+  font-size: 1.2em;
+  color: red;
+  cursor: pointer;
+}
+
+/*Edit overlay*/
+
+#editOverlay {
+  position: absolute;
+  top: 10em;
+  left: 50%;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 5%;
+  padding: 10px;
+  color: #f5f5f5;
+  animation-name: zoom;
+  animation-duration: 1s;
+}
+
+#editOverlay > h1 {
+  text-align: center;
+  font-size: 1.1em;
+}
+
+#editOverlay > form {
+  margin-top: 1em;
+}
+
+#editInputHolder {
+  display: grid;
+  grid-auto-flow: column;
+  gap: 1em;
+}
+
+#editTitleLabel {
+  text-align: center;
+}
+
+#editLabel {
+  text-align: center;
+}
+
+#editBtnHolder {
+  display: grid;
+  grid-auto-flow: column;
+  margin-top: 1.8em;
+}
+
+#editSaveBtn {
+  background-color: rgb(62, 150, 62);
+  width: 50%;
+  margin: auto;
+  border-radius: 10%;
+  padding: 3px;
+  text-align: center;
+  font-size: larger;
+  cursor: pointer;
+}
+
+#cancelBtn {
+  background-color: rgb(62, 150, 62);
+  width: 50%;
+  margin: auto;
+  border-radius: 10%;
+  padding: 3px;
+  text-align: center;
+  font-size: larger;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .checkbox {
+    padding: 0.5em;
+  }
+
+  .listItem > p {
+    letter-spacing: 2px;
+    font-size: 15px;
+  }
+
+  #editContainer > i:nth-child(1) {
+    font-size: 1em;
+  }
+
+  #editContainer > i:nth-child(2) {
+    font-size: 1em;
+  }
+
+  .catContent {
+    cursor: pointer;
+    transition: all ease-in-out 0.5s;
+  }
+  .catContent {
+    font-size: large;
+  }
+
+}
+
+@media (max-width: 1023px) {
+  #catsec {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+  }
+}

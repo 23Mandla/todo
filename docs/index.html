@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://kit.fontawesome.com/9f76f12f76.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="output.css" />
+    <script src="script.js" defer></script>
+    <title>Todo</title>
+  </head>
+  <body>
+    <header
+      class="flex items-center border-b-4 border-b-[#b179795b] p-2 lg:justify-between lg:pl-60 sm:pl-0 sm:justify-around"
+    >
+      <h4>MY TODO</h4>
+      <div
+        class="relative bg-[#3C8CDF] px-7 py-3 rounded-full cursor-pointer text-center text-white lg:right-14 sm:right-0"
+        id="todo"
+      >
+        Add todo
+      </div>
+    </header>
+
+    <section
+      class="flex items-center justify-between border-b-2 border-b-[#b1797955] md:p-4 sm:p-1 mt-9 m-auto lg:w-1/2 sm:w-[90%]"
+    >
+      <ul class="flex md:space-x-10 sm:space-x-5 md:text-xl sm:text-base">
+        <li
+          class="cursor-pointer py-1 px-2 rounded bg-[#B17979] text-[#F5F5F5]"
+          id="all"
+        >
+          All
+        </li>
+        <li class="cursor-pointer py-1 px-2 rounded" id="inProgress">
+          In-progress
+        </li>
+        <li class="cursor-pointer py-1 px-2 rounded" id="closed">Closed</li>
+      </ul>
+      <div
+        class="mr-5 bg-green-600 p-1.5 px-2 rounded text-center text-white cursor-pointer"
+        id="clear"
+      >
+        clear all
+      </div>
+    </section>
+
+    <section class="mt-16 text-slate-100 p-10">
+      <ul
+        class="flex flex-col m-auto bg-[#bb9292] rounded-xl p-4 lg:w-1/2 sm:w-[90%]"
+        id="listItems"
+      ></ul>
+    </section>
+
+    <section
+      class="flex justify-center pb-5 bg-[#B17979] text-white text-xl lg:fixed lg:top-0 lg:w-48 h-screen"
+      id="catsec"
+    >
+      <div
+        class="text-center lg:translate-y-1/4 lg:h-1/2 lg:mt-14 sm:mt-9 text-white text-2xl"
+      >
+        <h1>CATEGORY</h1>
+        <div
+          id="categories"
+          class="flex lg:flex-col sm:flex-row gap-9 lg:mt-14 sm:mt-9"
+        ></div>
+      </div>
+    </section>
+  </body>
+</html>
