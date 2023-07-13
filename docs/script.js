@@ -240,7 +240,7 @@ function displayTodos(items) {
   listItems.innerHTML = "";
 
   if (items.length <= 0) {
-    listItems.innerHTML = `<h1>No todos add yet</h1>`;
+    listItems.innerHTML = `<h1 class="text-[#165030] text-4xl text-center">All cleared no todo's!</h1>`;
   } else {
     for (let item of items) {
       // Side menu titles
