@@ -2,103 +2,57 @@
 
 window.addEventListener("load", () => {
   formOverlay();
-  let taskItems = [];
-  //display added todos after page reload
-  let storedItem = localStorage.getItem("taskObject");
-  if (storedItem != null) {
-    taskItems = JSON.parse(storedItem);
-    displayTodos(taskItems);
-  }
+  const progressTodos = JSON.parse(localStorage.getItem("progress")) || [];
+  const closedTodos = JSON.parse(localStorage.getItem("closedItems")) || [];
+  const allTodos = [...progressTodos, ...closedTodos];
+  displayTodos(allTodos);
 });
 
-//All progress items
-let allTask = document.getElementById("all");
-allTask.addEventListener("click", () => {
-  let taskItems = [];
-  //style clicked subheading
-  allTask.style.backgroundColor = "#B17979";
-  allTask.style.color = "whitesmoke";
-
-  //set styles for "unclicked" subheadings
-  inProgress.style.backgroundColor = "transparent";
-  inProgress.style.color = "#473737";
-  closed.style.backgroundColor = "transparent";
-  closed.style.color = "#473737";
-
-  //display items as stored from local storage
-  let allTasks = localStorage.getItem("taskObject");
-  if (allTask !== null) {
-    taskItems = JSON.parse(allTasks);
-    displayTodos(taskItems);
-  }
+//display all todos
+const allTodoItems = document.getElementById("all");
+allTodoItems.addEventListener("click", () => {
+  const progressTodos = JSON.parse(localStorage.getItem("progress")) || [];
+  const closedTodos = JSON.parse(localStorage.getItem("closedItems")) || [];
+  const allTodos = [...progressTodos, ...closedTodos];
+  displayTodos(allTodos);
 });
 
-//in-progress tasks
-let inProgress = document.getElementById("inProgress");
-inProgress.addEventListener("click", () => {
-  let progressArry = [];
-  //style clicked subheading
-  inProgress.style.backgroundColor = "#B17979";
-  inProgress.style.color = "whitesmoke";
-
-  //set styles for "unclicked" subheadings
-  allTask.style.backgroundColor = "transparent";
-  allTask.style.color = "#473737";
-  closed.style.backgroundColor = "transparent";
-  closed.style.color = "#473737";
-
-  progressArry = JSON.parse(localStorage.getItem("taskObject"));
-
-  for (let item of progressArry) {
-    let falseItems = [
-      ...new Set(
-        item.objectItem.filter((subItem) => {
-          return subItem.fulfilled === false;
-        })
-      ),
-    ];
-
-    item.objectItem = falseItems;
-    displayTodos(progressArry);
-  }
+//display inprogress
+const inProgess = document.getElementById("inProgress");
+inProgess.addEventListener("click", () => {
+  let progress = JSON.parse(localStorage.getItem("progress")) || [];
+  displayTodos(progress);
 });
 
-//closed tasks
-let closed = document.getElementById("closed");
+function deepCopyArray(array) {
+  return JSON.parse(JSON.stringify(array));
+}
 
-closed.addEventListener("click", () => {
-  let closedArray = [];
-  //style clicked subheading
-  closed.style.backgroundColor = "#B17979";
-  closed.style.color = "whitesmoke";
-  inProgress.style.backgroundColor = "transparent";
-  allTask.style.backgroundColor = "transparent";
-  inProgress.style.color = "#473737";
-  allTask.style.color = "#473737";
-
-  closedArray = JSON.parse(localStorage.getItem("taskObject"));
-
-  for (let item of closedArray) {
-    let trueItems = [
-      ...new Set(
-        item.objectItem.filter((subItem) => {
-          return subItem.fulfilled === true;
-        })
-      ),
-    ];
-    console.log(trueItems);
-    item.objectItem = trueItems;
-    displayTodos(closedArray);
-  }
+//display closeds
+const closedTodos = document.getElementById("closed");
+closedTodos.addEventListener("click", () => {
+  let closed = JSON.parse(localStorage.getItem("closedItems")) || [];
+  displayTodos(closed);
 });
 
 //delete all the tasks in the array
 let delBtn = document.getElementById("clear");
 delBtn.addEventListener("click", () => {
-  let arrayItems = [];
-  arrayItems - JSON.stringify(localStorage.getItem("taskObject"));
+  //clear original array
+  let arrayItems = JSON.parse(localStorage.getItem("taskObject")) || [];
   arrayItems.splice(0);
   localStorage.setItem("taskObject", JSON.stringify(arrayItems));
+
+  //clear closed array
+  let closedArray = JSON.parse(localStorage.getItem("closedItems")) || [];
+  closedArray.splice(0);
+  localStorage.setItem("closedItems", JSON.stringify(closedArray));
+
+  //clear progress array
+  let progress = JSON.parse(localStorage.getItem("progress")) || [];
+  progress.splice(0);
+  localStorage.setItem("progress", JSON.stringify(progress));
+
   displayTodos(arrayItems);
 });
 
@@ -198,38 +152,33 @@ function formOverlay() {
 }
 
 function saveItem() {
-  let taskItems = [];
-  //get input value and create an object
+  // Retrieve existing items from localStorage or initialize an empty array
+  const originalArr = JSON.parse(localStorage.getItem("taskObject")) || [];
+
+  // Get input values and create an object
   let taskTitle = document.getElementById("catInp").value;
   let taskItem = document.getElementById("inputEl").value;
 
   let taskObject = {
+    id: Math.floor(Math.random() * 100),
     taskTitle: taskTitle,
-    objectItem: [
-      {
-        id: Math.floor(Math.random() * 100),
-        fulfilled: false,
-        category: taskTitle,
-        taskItem: taskItem,
-      },
-    ],
+    fulfilled: false,
+    taskItem: taskItem,
   };
 
-  taskItems = JSON.parse(localStorage.getItem("taskObject"));
-  let titleExist = taskItems.find((item) => item.taskTitle === taskTitle);
-  if (titleExist) {
-    titleExist.objectItem.push({
-      id: Math.floor(Math.random() * 100) + Date.now(),
-      fulfilled: false,
-      category: titleExist.taskTitle,
-      taskItem: taskItem,
-    });
-    displayTodos(taskItems);
-  } else {
-    taskItems.push(taskObject);
-    displayTodos(taskItems);
-  }
-  localStorage.setItem("taskObject", JSON.stringify(taskItems));
+  originalArr.push(taskObject);
+  displayTodos(originalArr);
+
+  //initialise closed Todos
+  let closedTodos = originalArr.filter((item) => item.fulfilled === true);
+  localStorage.setItem("closedItems", JSON.stringify(closedTodos));
+
+  //initialise closed Todos
+  let progressTodo = originalArr.filter((item) => item.fulfilled === false);
+  localStorage.setItem("progress", JSON.stringify(progressTodo));
+
+  // Save the updated array back to localStorage
+  localStorage.setItem("taskObject", JSON.stringify(originalArr));
 }
 
 function displayTodos(items) {
@@ -243,112 +192,130 @@ function displayTodos(items) {
     listItems.innerHTML = `<h1 class="text-[#165030] text-4xl text-center">All cleared no todo's!</h1>`;
   } else {
     for (let item of items) {
-      // Side menu titles
-      let category = document.createElement("h3");
-      category.classList.add("catContent");
-      category.textContent = item.taskTitle;
-      categories.appendChild(category);
+      //create place holder for list todos
+      let todoContainer = document.createElement("div");
+      todoContainer.classList.add("todoContainer");
 
-      //filter todos by category
-      let catContents = document.querySelectorAll(".catContent");
-      catContents.forEach((category) => {
-        category.addEventListener("click", (evt) => {
-          let catTitle = evt.target.textContent;
-          let catContent = [];
-          catContent = JSON.parse(localStorage.getItem("taskObject"));
-          if (catContent !== null) {
-            for (let catItem of catContent) {
-              let catObject = catItem.objectItem.filter((cat) => {
-                return cat.category == catTitle;
-              });
-              catItem.objectItem = catObject;
-              displayTodos(catContent);
-            }
-          }
-        });
-      });
+      //create checked input
+      let checkInput = document.createElement("div");
+      checkInput.id = item.id;
+      checkInput.classList.add("checkbox");
+      if (item.fulfilled === true) {
+        checkInput.classList.add("active");
+      } else {
+        checkInput.classList.remove("active");
+      }
 
-      //todo list
-      for (let subItem of item.objectItem) {
-        //create place holder for list todos
-        let todoContainer = document.createElement("div");
-        todoContainer.classList.add("todoContainer");
+      checkInput.addEventListener("click", () => {
+        //find array index
+        let subItemIndex = items.indexOf(item);
 
-        //create checked input
-        let checkInput = document.createElement("div");
-        checkInput.id = subItem.id;
-        checkInput.classList.add("checkbox");
-        if (subItem.fulfilled === true) {
-          checkInput.classList.add("active");
-        } else {
-          checkInput.classList.remove("active");
-        }
+        //get closed and in progress arrays
+        const closedTodoItems =
+          JSON.parse(localStorage.getItem("closedItems")) || [];
+        const progressItems =
+          JSON.parse(localStorage.getItem("progress")) || [];
 
-        checkInput.addEventListener("click", (evt) => {
-          let subItemIndex = item.objectItem.findIndex(
-            (subItem) => subItem.id == evt.target.id
+        //if the origanal array has subItemIndex
+        if (subItemIndex > -1) {
+          //change fulifled value based on the current value false <=> true
+          items[subItemIndex].fulfilled = !items[subItemIndex].fulfilled;
+          checkInput.classList.toggle("active");
+
+          // Check item id if it already exist exists in closedTodoItems
+          const closedItemIndex = closedTodoItems.findIndex(
+            (item) => item.id === items[subItemIndex].id
           );
 
-          if (subItemIndex > -1) {
-            item.objectItem[subItemIndex].fulfilled =
-              !item.objectItem[subItemIndex].fulfilled;
-            checkInput.classList.toggle("active");
-            localStorage.setItem("taskObject", JSON.stringify(items));
+          // Check item id if it already exist exists in progressItems
+          const progressItemIndex = progressItems.findIndex(
+            (item) => item.id === items[subItemIndex].id
+          );
+
+          if (items[subItemIndex].fulfilled === true) {
+            //item does not exist in cloaseItem array, add it
+            if (closedItemIndex === -1) {
+              closedTodoItems.push(items[subItemIndex]);
+            }
+
+            //but item found in progressItems, remove it
+            if (progressItemIndex !== -1) {
+              progressItems.splice(progressItemIndex, 1);
+            }
+          } else {
+            //item does not exist in progress array, add it
+            if (progressItemIndex === -1) {
+              progressItems.push(items[subItemIndex]);
+            }
+
+             //but item found in progressItems, remove it
+            if (closedItemIndex !== -1) {
+              closedTodoItems.splice(closedItemIndex, 1);
+            }
           }
-        });
 
-        //create list item
-        let listItem = document.createElement("li");
-        listItem.classList.add("listItem");
+          localStorage.setItem("closedItems", JSON.stringify(closedTodoItems));
+          localStorage.setItem("progress", JSON.stringify(progressItems));
+          localStorage.setItem("taskObject", JSON.stringify(items));
+        }
+      });
 
-        let listContent = document.createElement("p");
-        listContent.textContent = subItem.taskItem;
-        listItem.appendChild(listContent);
+      //create list item
+      let listItem = document.createElement("li");
+      listItem.classList.add("listItem");
 
-        let editContainer = document.createElement("div");
-        editContainer.id = "editContainer";
+      let listContent = document.createElement("p");
+      listContent.textContent = item.taskItem;
+      listItem.appendChild(listContent);
 
-        //edit icon
-        let editIcon = document.createElement("i");
-        editIcon.classList.add("fa-solid", "fa-pen-to-square");
-        editIcon.dataset.id = subItem.id;
-        editIcon.addEventListener("click", editItem);
+      let editContainer = document.createElement("div");
+      editContainer.id = "editContainer";
 
-        //delete icon
-        let delIcon = document.createElement("i");
-        delIcon.classList.add("fa-solid", "fa-trash-can");
-        delIcon.dataset.id = subItem.id;
-        delIcon.addEventListener("click", deleteItem);
+      //edit icon
+      let editIcon = document.createElement("i");
+      editIcon.classList.add("fa-solid", "fa-pen-to-square");
+      editIcon.dataset.id = item.id;
+      editIcon.addEventListener("click", editItem);
 
-        //append delete and edit icon
-        editContainer.appendChild(editIcon);
-        editContainer.appendChild(delIcon);
+      //delete icon
+      let delIcon = document.createElement("i");
+      delIcon.classList.add("fa-solid", "fa-trash-can");
+      delIcon.dataset.id = item.id;
+      delIcon.addEventListener("click", deleteItem);
 
-        todoContainer.appendChild(checkInput);
-        todoContainer.appendChild(listItem);
-        todoContainer.appendChild(editContainer);
-        listItems.appendChild(todoContainer);
-      }
+      //append delete and edit icon
+      editContainer.appendChild(editIcon);
+      editContainer.appendChild(delIcon);
+
+      todoContainer.appendChild(checkInput);
+      todoContainer.appendChild(listItem);
+      todoContainer.appendChild(editContainer);
+      listItems.appendChild(todoContainer);
     }
   }
 }
 
 function deleteItem(evt) {
-  let storedItems = [];
-  let itemToDelete = localStorage.getItem("taskObject");
-  storedItems = JSON.parse(itemToDelete);
-  for (let item of storedItems) {
-    let subItemIndex = item.objectItem.findIndex(
+  const progressTodos = JSON.parse(localStorage.getItem("progress")) || [];
+  const closedTodos = JSON.parse(localStorage.getItem("closedItems")) || [];
+  const allTodos = [...progressTodos, ...closedTodos];
+ 
+    let subItemIndex = allTodos.findIndex(
       (subItem) => subItem.id == evt.target.dataset.id
     );
 
-    if (subItemIndex !== -1) {
-      item.objectItem.splice(subItemIndex, 1);
-      localStorage.setItem("taskObject", JSON.stringify(storedItems));
-      displayTodos(storedItems);
+    //CONTINUE
+    /*if (subItemIndex !== -1) {
+      const deleteItem = allTodos.splice(subItemIndex, 1);
+      if(deleteItem.fulfilled === true){
+        localStorage.setItem("closedItems", JSON.stringify(closedTodos));
+      }else{
+        localStorage.setItem("progress", JSON.stringify(progressTodos));
+      }
+      displayTodos(allTodos);
       return;
-    }
-  }
+    }*/
+  
 }
 
 function editItem(evt) {
@@ -357,7 +324,7 @@ function editItem(evt) {
   let itemToEdit = localStorage.getItem("taskObject");
   storedItems = JSON.parse(itemToEdit);
   for (let item of storedItems) {
-    let editTask = item.objectItem.find(
+    let editTask = item.find(
       (editItem) => editItem.id == evt.target.dataset.id
     );
 
