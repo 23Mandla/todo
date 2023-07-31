@@ -891,8 +891,8 @@ label {
 
 #editOverlay {
   position: absolute;
-  top: 10em;
-  left: 50%;
+  top: 10%;
+  left: 10%;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.8);
   border-radius: 5%;

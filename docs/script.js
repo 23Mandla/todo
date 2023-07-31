@@ -24,10 +24,6 @@ inProgess.addEventListener("click", () => {
   displayTodos(progress);
 });
 
-function deepCopyArray(array) {
-  return JSON.parse(JSON.stringify(array));
-}
-
 //display closeds
 const closedTodos = document.getElementById("closed");
 closedTodos.addEventListener("click", () => {
@@ -191,6 +187,17 @@ function displayTodos(items) {
   if (items.length <= 0) {
     listItems.innerHTML = `<h1 class="text-[#165030] text-4xl text-center">All cleared no todo's!</h1>`;
   } else {
+    //create uniues for titles **UPDATE**
+    const todoItems = [...new Set(items.map((item) => item.taskTitle))];
+
+    //create place holder for unique values
+    const categoryTitle = document.getElementById("categories");
+    categoryTitle.innerHTML = todoItems
+      .map((item) => {
+        return `<h3 class="catContent">${item}</h3>`;
+      })
+      .join("");
+
     for (let item of items) {
       //create place holder for list todos
       let todoContainer = document.createElement("div");
@@ -248,7 +255,7 @@ function displayTodos(items) {
               progressItems.push(items[subItemIndex]);
             }
 
-             //but item found in progressItems, remove it
+            //but item found in progressItems, remove it
             if (closedItemIndex !== -1) {
               closedTodoItems.splice(closedItemIndex, 1);
             }
@@ -296,140 +303,181 @@ function displayTodos(items) {
 }
 
 function deleteItem(evt) {
+  //get arrays and create new one
   const progressTodos = JSON.parse(localStorage.getItem("progress")) || [];
   const closedTodos = JSON.parse(localStorage.getItem("closedItems")) || [];
   const allTodos = [...progressTodos, ...closedTodos];
- 
-    let subItemIndex = allTodos.findIndex(
-      (subItem) => subItem.id == evt.target.dataset.id
-    );
 
-    //CONTINUE
-    /*if (subItemIndex !== -1) {
-      const deleteItem = allTodos.splice(subItemIndex, 1);
-      if(deleteItem.fulfilled === true){
-        localStorage.setItem("closedItems", JSON.stringify(closedTodos));
-      }else{
-        localStorage.setItem("progress", JSON.stringify(progressTodos));
-      }
-      displayTodos(allTodos);
-      return;
-    }*/
-  
+  //find index of item to be deleted
+  const subItemIndex = allTodos.findIndex(
+    (subItem) => subItem.id == evt.target.dataset.id
+  );
+
+  if (subItemIndex !== -1) {
+    //update closed todos
+    if (allTodos[subItemIndex].fulfilled === true) {
+      let deletedClosed = closedTodos.filter((item) => {
+        return item.id !== allTodos[subItemIndex].id;
+      });
+      let closedTodosUpdated = [...deletedClosed];
+      displayTodos(closedTodosUpdated);
+      localStorage.setItem("closedItems", JSON.stringify(closedTodosUpdated));
+    } else {
+      //update progress todos
+      let deletedProg = progressTodos.filter((item) => {
+        return item.id !== allTodos[subItemIndex].id;
+      });
+      let progresTodosUpdated = [...deletedProg];
+      displayTodos(progresTodosUpdated);
+      localStorage.setItem("progress", JSON.stringify(progresTodosUpdated));
+    }
+  }
 }
 
 function editItem(evt) {
-  // Find the task item in the taskItems array by its ID
-  let storedItems = [];
-  let itemToEdit = localStorage.getItem("taskObject");
-  storedItems = JSON.parse(itemToEdit);
-  for (let item of storedItems) {
-    let editTask = item.find(
-      (editItem) => editItem.id == evt.target.dataset.id
-    );
+  //get arrays and create new one
+  const progressTodos = JSON.parse(localStorage.getItem("progress")) || [];
+  const closedTodos = JSON.parse(localStorage.getItem("closedItems")) || [];
+  const allTodos = [...progressTodos, ...closedTodos];
 
-    if (editTask) {
-      // Display a prompt dialog to edit the task item
-      let editOverlay = document.createElement("div");
-      editOverlay.id = "editOverlay";
+  let editTask = allTodos.find(
+    (editItem) => editItem.id == evt.target.dataset.id
+  );
 
-      //ctreate input and assign task tittle and element
-      let editTitle = document.createElement("h1");
-      editTitle.textContent = "Edit todo";
+  if (editTask) {
+    // Display a prompt dialog to edit the task item
+    let editOverlay = document.createElement("div");
+    editOverlay.id = "editOverlay";
 
-      //create from input element
-      let editForm = document.createElement("form");
-      editForm.action = "";
-      editForm.id = "editForm";
+    //ctreate input and assign task tittle and element
+    let editTitle = document.createElement("h1");
+    editTitle.textContent = "Edit todo";
 
-      //input holder
-      let editInputHolder = document.createElement("div");
-      editInputHolder.id = "editInputHolder";
+    //create from input element
+    let editForm = document.createElement("form");
+    editForm.action = "";
+    editForm.id = "editForm";
 
-      //edit title holder
-      let editTitleholder = document.createElement("div");
-      editTitleholder.id = "editTitleHolder";
+    //input holder
+    let editInputHolder = document.createElement("div");
+    editInputHolder.id = "editInputHolder";
 
-      //edit lable
-      let editTitleLabel = document.createElement("label");
-      editTitleLabel.textContent = "Category";
-      editTitleLabel.id = "editTitleLabel";
+    //edit title holder
+    let editTitleholder = document.createElement("div");
+    editTitleholder.id = "editTitleHolder";
 
-      //input value
-      let editTitleValue = document.createElement("input");
-      editTitleValue.value = editTask.category;
-      editTitleValue.id = "editTitleValue";
-      editTitleLabel.htmlFor = editTitleValue.id;
+    //edit lable
+    let editTitleLabel = document.createElement("label");
+    editTitleLabel.textContent = "Category";
+    editTitleLabel.id = "editTitleLabel";
 
-      //append edit label and title
-      editTitleholder.appendChild(editTitleLabel);
-      editTitleholder.appendChild(editTitleValue);
+    //input value
+    let editTitleValue = document.createElement("input");
+    editTitleValue.value = editTask.taskTitle;
+    editTitleValue.id = "editTitleValue";
+    editTitleLabel.htmlFor = editTitleValue.id;
 
-      //edit value holder
-      let editValueholder = document.createElement("div");
-      editValueholder.id = "editValueHolder";
+    //append edit label and title
+    editTitleholder.appendChild(editTitleLabel);
+    editTitleholder.appendChild(editTitleValue);
 
-      //edit label
-      let editLabel = document.createElement("label");
-      editLabel.textContent = "Edit todo";
-      editLabel.id = "editLabel";
+    //edit value holder
+    let editValueholder = document.createElement("div");
+    editValueholder.id = "editValueHolder";
 
-      //input value
-      let editValue = document.createElement("input");
-      editValue.value = editTask.taskItem;
-      editValue.id = "editValue";
-      editLabel.htmlFor = editValue.id;
+    //edit label
+    let editLabel = document.createElement("label");
+    editLabel.textContent = "Edit todo";
+    editLabel.id = "editLabel";
 
-      //append edit label and edit input value
-      editValueholder.appendChild(editLabel);
-      editValueholder.appendChild(editValue);
+    //input value
+    let editValue = document.createElement("input");
+    editValue.value = editTask.taskItem;
+    editValue.id = "editValue";
+    editLabel.htmlFor = editValue.id;
 
-      //add title and input value to the form
-      editInputHolder.appendChild(editTitleholder);
-      editInputHolder.appendChild(editValueholder);
+    //append edit label and edit input value
+    editValueholder.appendChild(editLabel);
+    editValueholder.appendChild(editValue);
 
-      //button holder
-      let editBtnHolder = document.createElement("div");
-      editBtnHolder.id = "editBtnHolder";
+    //add title and input value to the form
+    editInputHolder.appendChild(editTitleholder);
+    editInputHolder.appendChild(editValueholder);
 
-      //save button
-      let editSaveBtn = document.createElement("div");
-      editSaveBtn.id = "editSaveBtn";
-      let saveBtnContent = document.createElement("P");
-      saveBtnContent.textContent = "Ok";
-      editSaveBtn.appendChild(saveBtnContent);
-      editSaveBtn.addEventListener("click", () => {
-        let taskTitle = document.getElementById("editTitleValue").value;
-        let taskValue = document.getElementById("editValue").value;
-        editTask.taskItem = taskValue;
-        editTask.category = taskTitle;
-        displayTodos(storedItems);
-        localStorage.setItem("taskObject", JSON.stringify(storedItems));
-      });
+    //button holder
+    let editBtnHolder = document.createElement("div");
+    editBtnHolder.id = "editBtnHolder";
 
-      //cancel btn
-      let cancelBtn = document.createElement("div");
-      cancelBtn.id = "cancelBtn";
-      let cancelBtnContent = document.createElement("P");
-      cancelBtnContent.textContent = "Cancel";
-      cancelBtn.appendChild(cancelBtnContent);
-      cancelBtn.addEventListener("click", () => {
-        document.body.removeChild(editOverlay);
-      });
+    //save button
+    let editSaveBtn = document.createElement("div");
+    editSaveBtn.id = "editSaveBtn";
+    let saveBtnContent = document.createElement("P");
+    saveBtnContent.textContent = "Ok";
+    editSaveBtn.appendChild(saveBtnContent);
 
-      //add button to the container
-      editBtnHolder.appendChild(editSaveBtn);
-      editBtnHolder.appendChild(cancelBtn);
+    editSaveBtn.addEventListener("click", () => {
+      let taskTitle = document.getElementById("editTitleValue").value;
+      let taskValue = document.getElementById("editValue").value;
 
-      //add input values to the form
-      editForm.appendChild(editInputHolder);
-      editForm.appendChild(editBtnHolder);
+      if (editTask.fulfilled === true) {
+        const editClosedTask =
+          JSON.parse(localStorage.getItem("closedItems")) || [];
+        const index = editClosedTask.findIndex(
+          (item) => item.id == evt.target.dataset.id
+        );
 
-      //add overlay title and form to the overlay
-      editOverlay.appendChild(editTitle);
-      editOverlay.appendChild(editForm);
+        if (index !== -1) {
+          // Update the object's properties
+          editClosedTask[index].taskTitle = taskTitle;
+          editClosedTask[index].taskItem = taskValue;
 
-      document.body.appendChild(editOverlay);
-    }
+          // Save the updated array back to localStorage
+          localStorage.setItem("closedItems", JSON.stringify(editClosedTask));
+          displayTodos(editClosedTask);
+          console.log("Updated closed item:", editClosedTask[index]);
+        }
+      } else {
+        const progressTodos =
+          JSON.parse(localStorage.getItem("progress")) || [];
+        const index = progressTodos.findIndex(
+          (item) => item.id == evt.target.dataset.id
+        );
+
+        if (index !== -1) {
+          // Update the object's properties
+          progressTodos[index].taskTitle = taskTitle;
+          progressTodos[index].taskItem = taskValue;
+
+          // Save the updated array back to localStorage
+          localStorage.setItem("progress", JSON.stringify(progressTodos));
+          displayTodos(progressTodos);
+          console.log("Updated progress item:", progressTodos[index]);
+        }
+      }
+    });
+
+    //cancel btn
+    let cancelBtn = document.createElement("div");
+    cancelBtn.id = "cancelBtn";
+    let cancelBtnContent = document.createElement("P");
+    cancelBtnContent.textContent = "Cancel";
+    cancelBtn.appendChild(cancelBtnContent);
+    cancelBtn.addEventListener("click", () => {
+      document.body.removeChild(editOverlay);
+    });
+
+    //add button to the container
+    editBtnHolder.appendChild(editSaveBtn);
+    editBtnHolder.appendChild(cancelBtn);
+
+    //add input values to the form
+    editForm.appendChild(editInputHolder);
+    editForm.appendChild(editBtnHolder);
+
+    //add overlay title and form to the overlay
+    editOverlay.appendChild(editTitle);
+    editOverlay.appendChild(editForm);
+
+    document.body.appendChild(editOverlay);
   }
 }
