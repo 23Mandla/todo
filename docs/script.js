@@ -322,6 +322,7 @@ function deleteItem(evt) {
       let closedTodosUpdated = [...deletedClosed];
       displayTodos(closedTodosUpdated);
       localStorage.setItem("closedItems", JSON.stringify(closedTodosUpdated));
+      localStorage.setItem("taskObject", JSON.stringify(closedTodosUpdated));
     } else {
       //update progress todos
       let deletedProg = progressTodos.filter((item) => {
@@ -332,6 +333,22 @@ function deleteItem(evt) {
       localStorage.setItem("progress", JSON.stringify(progresTodosUpdated));
     }
   }
+
+  //update original array
+  const originaAr = JSON.parse(localStorage.getItem("taskObject")) || [];
+
+  const subOrigIndex = originaAr.findIndex(
+    (subItem) => subItem.id == evt.target.dataset.id
+  );
+
+  if(subOrigIndex !== -1){
+    let deletedOriginal = originaAr.filter((item) => {
+      return item.id !== originaAr[subOrigIndex].id;
+    });
+    let updatedOrig = [...deletedOriginal]
+    localStorage.setItem("taskObject", JSON.stringify(updatedOrig));
+  }
+
 }
 
 function editItem(evt) {
