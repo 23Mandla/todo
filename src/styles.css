@@ -206,6 +206,14 @@ label {
 }
 
 @media (max-width: 768px) {
+  #addTodo{
+    width: 100%;
+  }
+
+  #todoBtns {
+    justify-content: space-around;
+  }
+
   .checkbox {
     padding: 0.5em;
   }
@@ -238,5 +246,25 @@ label {
     bottom: 0;
     width: 100%;
     height: auto;
+  }
+}
+
+@media only screen and (max-width: 425px) {
+
+  #editOverlay{
+    width: 100%;
+    left: 0;
+  }
+
+  #editInputHolder{
+      grid-auto-flow: row;
+  }
+
+  #editTitleLabel {
+    text-align: left;
+  }
+
+  #editLabel {
+    text-align: left;
   }
 }

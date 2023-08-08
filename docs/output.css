@@ -702,6 +702,10 @@ video {
   padding-bottom: 0.75rem;
 }
 
+.pb-4 {
+  padding-bottom: 1rem;
+}
+
 .pb-5 {
   padding-bottom: 1.25rem;
 }
@@ -954,6 +958,14 @@ label {
 }
 
 @media (max-width: 768px) {
+  #addTodo{
+    width: 100%;
+  }
+
+  #todoBtns {
+    justify-content: space-around;
+  }
+
   .checkbox {
     padding: 0.5em;
   }
@@ -987,6 +999,43 @@ label {
   }
 }
 
+@media only screen and (max-width: 425px) {
+  #editOverlay{
+    width: 100%;
+    left: 0;
+  }
+
+  #editInputHolder{
+    grid-auto-flow: row;
+  }
+
+  #editTitleLabel {
+    text-align: left;
+  }
+
+  #editLabel {
+    text-align: left;
+  }
+}
+
+@media (min-width: 320px) {
+  .xsm\:w-full {
+    width: 100%;
+  }
+
+  .xsm\:justify-around {
+    justify-content: space-around;
+  }
+
+  .xsm\:pl-1 {
+    padding-left: 0.25rem;
+  }
+
+  .xsm\:pr-3 {
+    padding-right: 0.75rem;
+  }
+}
+
 @media (min-width: 375px) {
   .sm\:right-0 {
     right: 0px;
@@ -1000,22 +1049,18 @@ label {
     width: 90%;
   }
 
-  .sm\:flex-row {
-    flex-direction: row;
+  .sm\:w-full {
+    width: 100%;
   }
 
-  .sm\:justify-around {
-    justify-content: space-around;
+  .sm\:flex-row {
+    flex-direction: row;
   }
 
   .sm\:space-x-5 > :not([hidden]) ~ :not([hidden]) {
     --tw-space-x-reverse: 0;
     margin-right: calc(1.25rem * var(--tw-space-x-reverse));
     margin-left: calc(1.25rem * calc(1 - var(--tw-space-x-reverse)));
-  }
-
-  .sm\:p-1 {
-    padding: 0.25rem;
   }
 
   .sm\:pl-0 {
@@ -1029,14 +1074,22 @@ label {
 }
 
 @media (min-width: 768px) {
+  .md\:w-\[90\%\] {
+    width: 90%;
+  }
+
   .md\:space-x-10 > :not([hidden]) ~ :not([hidden]) {
     --tw-space-x-reverse: 0;
     margin-right: calc(2.5rem * var(--tw-space-x-reverse));
     margin-left: calc(2.5rem * calc(1 - var(--tw-space-x-reverse)));
   }
 
-  .md\:p-4 {
-    padding: 1rem;
+  .md\:pl-4 {
+    padding-left: 1rem;
+  }
+
+  .md\:pr-4 {
+    padding-right: 1rem;
   }
 
   .md\:text-xl {
